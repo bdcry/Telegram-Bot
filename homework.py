@@ -1,7 +1,7 @@
+import logging
 import os
 import time
 
-import logging
 import requests
 import telegram
 from dotenv import load_dotenv
@@ -47,7 +47,7 @@ def main():
     # проинициализировать бота здесь
     bot_client = telegram.Bot(token=TELEGRAM_TOKEN)
     logging.debug('Запуск Telegram-бота')
-    current_timestamp = int(time.time())  # начальное значение timestamp
+    current_timestamp = 0  # начальное значение timestamp
 
     while True:
         try:
