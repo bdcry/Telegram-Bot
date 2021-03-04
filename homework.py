@@ -6,6 +6,7 @@ from logging.handlers import RotatingFileHandler
 import requests
 import telegram
 from dotenv import load_dotenv
+from requests.exceptions import RequestException
 
 load_dotenv()
 
@@ -23,19 +24,23 @@ PRAKTIKUM_TOKEN = os.getenv('PRAKTIKUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 PRAKTIKUM_URL = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
+REVIEW_STATUSES = {
+    'reviewing': 'Работу взяли на проверку.',
+    'approved': 'Ревьюеру всё понравилось, можно приступать к следующему '
+                'уроку.',
+    'rejected': 'К сожалению в работе нашлись ошибки.'
+}
 
 
 def parse_homework_status(homework):
-    homework_name = homework['homework_name']
-    homework_status = homework['status']
-    if homework_status == 'rejected':
-        verdict = 'К сожалению в работе нашлись ошибки.'
-    elif homework_status == 'reviewing':
-        verdict = 'Работу взяли на проверку.'
+    if homework is None:
+        message = 'Проблемы с ответом от сервера.'
+        logging.error(message, exc_info=True)
     else:
-        verdict = (
-            'Ревьюеру всё понравилось, можно приступать к следующему уроку.'
-        )
+        homework_name = homework['homework_name']
+    homework_status = homework['status']
+    unknown_status = 'Неизвестный статус: status'
+    verdict = REVIEW_STATUSES.get(homework_status, unknown_status)
     return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
 
 
@@ -50,8 +55,10 @@ def get_homework_statuses(current_timestamp):
         homework_statuses = requests.get(
             PRAKTIKUM_URL, params=params, headers=headers)
     except requests.HTTPError:
-        logging.warning("Exception occurred")
+        logging.warning('Сервер не ответил')
         return 'Не удалось получить статус домашней работы.'
+    except RequestException:
+        return 'Что-то пошло не так...'
     return homework_statuses.json()
 
 
