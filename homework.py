@@ -1,6 +1,7 @@
 import logging
 import os
 import time
+from logging.handlers import RotatingFileHandler
 
 import requests
 import telegram
@@ -9,6 +10,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 logger = logging.getLogger('homework')
+handler = RotatingFileHandler('logs.log', maxBytes=50000000, backupCount=5)
+logger.addHandler(handler)
 PRAKTIKUM_TOKEN = os.getenv('PRAKTIKUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
@@ -45,11 +48,11 @@ def send_message(message, bot_client):
 
 
 def main():
-    # проинициализировать бота здесь
+    #проинициализировать бота здесь
     bot_client = telegram.Bot(token=TELEGRAM_TOKEN)
     logger.debug(msg='Запуск Telegram-бота')
-    #current_timestamp = 0  # начальное значение timestamp
-    current_timestamp = int(time.time())
+    current_timestamp = 0  #начальное значение timestamp
+    #current_timestamp = int(time.time())
 
     while True:
         try:
@@ -59,7 +62,7 @@ def main():
                 send_message(parse_homework_status(homeworks[0]), bot_client)
             current_timestamp = new_homework.get('current_date')
             # обновить timestamp
-            time.sleep(300)  # опрашивать раз в пять минут
+            time.sleep(30)  # опрашивать раз в пять минут
 
         except Exception as e:
             print(f'Бот столкнулся с ошибкой: {e}')
