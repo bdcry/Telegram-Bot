@@ -28,3 +28,5 @@ db.sqlite3
 logs.log
 
 .vscode
+
+program.log
