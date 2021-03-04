@@ -51,8 +51,8 @@ def main():
     #проинициализировать бота здесь
     bot_client = telegram.Bot(token=TELEGRAM_TOKEN)
     logger.debug(msg='Запуск Telegram-бота')
-    current_timestamp = 0  #начальное значение timestamp
-    #current_timestamp = int(time.time())
+    #current_timestamp = 0  #начальное значение timestamp
+    current_timestamp = int(time.time())
 
     while True:
         try:
