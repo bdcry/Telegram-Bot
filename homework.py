@@ -62,7 +62,7 @@ def main():
                 send_message(parse_homework_status(homeworks[0]), bot_client)
             current_timestamp = new_homework.get('current_date')
             # обновить timestamp
-            time.sleep(30)  # опрашивать раз в пять минут
+            time.sleep(300)  # опрашивать раз в пять минут
 
         except Exception as e:
             print(f'Бот столкнулся с ошибкой: {e}')
